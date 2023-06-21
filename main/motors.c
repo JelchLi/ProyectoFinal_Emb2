@@ -35,7 +35,7 @@ esp_err_t motorA_adelante(void)
     gpio_set_level(in1, 1);
     gpio_set_level(in2, 0);
 
-    ESP_LOGW(TAG, "direccion 1 en progreso");
+    ESP_LOGW(TAG, "motor A adelante");
 
     return ESP_OK;
 }
@@ -46,7 +46,7 @@ esp_err_t motorA_atras(void)
     gpio_set_level(in1, 0);
     gpio_set_level(in2, 1);
 
-    ESP_LOGW(TAG, "direccion 2 en progreso");
+    ESP_LOGW(TAG, "motor A atras");
 
     return ESP_OK;
 }
@@ -57,7 +57,7 @@ esp_err_t motorB_adelante(void)
     gpio_set_level(in3, 1);
     gpio_set_level(in4, 0);
 
-    ESP_LOGW(TAG, "direccion 3 en progreso");
+    ESP_LOGW(TAG, "motor B adelante");
 
     return ESP_OK;
 }
@@ -68,7 +68,7 @@ esp_err_t motorB_atras(void)
     gpio_set_level(in3, 0);
     gpio_set_level(in4, 1);
 
-    ESP_LOGW(TAG, "direccion 4 en progreso");
+    ESP_LOGW(TAG, "motor B atras");
 
     return ESP_OK;
 }

@@ -71,24 +71,22 @@ ads1115_t ads1115_cfg = {
 //configura el canal adc para leer el sensor de temperatura
 esp_err_t set_temperature(void)
 {
-    //configuracion del ADC1 canal 6 con una atenuacion de 11db
     adc1_config_channel_atten(ADC1_CHANNEL_6, ADC_ATTEN_DB_11);
-    //los datos seran leidos en 12 bits
     adc1_config_width(ADC_WIDTH_BIT_12);
     return ESP_OK;
 }
 
-//obtiene la lectura del sensor de temperatura
+
 float get_temperature(void)
 {
-    //obtiene los datos del ADC
+    
     float adc_value = adc1_get_raw(ADC1_CHANNEL_6);
     //conversion a voltaje
     float voltaje = adc_value/650;
     //conversion a temperatura
     float temperatura = voltaje/0.01;
 
-    ESP_LOGE(TAG, "temperatura: %.2f", temperatura);
+    ESP_LOGI(TAG, "temperatura: %.2f grados", temperatura);
 
     return temperatura;
 }
@@ -128,8 +126,7 @@ float get_presion(void)
     //Presion en Kpa segun grafica 2 del Datasheet
     P = (Vout - 0.04 * Vs) / (0.018 * Vs) + tolP; //Kpa
 
-    //Impresión de resultados
-    printf("Presion: %2.2f kPa\n", P);
+    ESP_LOGI(TAG, "Presion: %2.2f kPa\n", P);
 
     return P;
 }
@@ -177,7 +174,7 @@ float get_corriente(void){
     }
     I_eficaz = sqrt(sum_I_instant / 500);
     I_Calculada = I_eficaz * 1.39;                 //valores que cambia con pruebas
-    ESP_LOGI(TAG,"corriente.. %f.", I_Calculada);
+    ESP_LOGI(TAG,"corriente.. %.2f Amperios", I_Calculada);
 
     return I_Calculada;
 }
