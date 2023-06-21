@@ -8,81 +8,117 @@
 <body>
   <h1>ESP32 Server</h1>
   <!-- declaracion de los botones que llamaran a las funciones GET -->
-  <button onclick="button1()">Button 1</button>
-  <button onclick="button2()">Button 2</button><br>
-  <button onclick="button3()">Button 3</button>
-  <button onclick="button4()">Button 4</button><br>
-  <button onclick="actualizarDatos()">data</button><br>
+  <button onclick="motorAF()">motorA-Forward</button>
+  <button onclick="motorAB()">motorA-Backward</button><br>
+  <button onclick="motorBF()">motorB-Forward</button>
+  <button onclick="motorBB()">motorA-Backward</button><br>
+  <button onclick="reset_motors()">reset motors</button><br>
   <!-- Aqui se reemplazaran los valores de los sensores-->
   <p>Temperatura: <span id="temperatura"></span></p>
   <p>Presion: <span id="presion"></span></p>
   <p>Corriente: <span id="corriente"></span></p>
     <!-- Funciones para mandar los GETs -->
   <script>
-    function button1() {
-      axios.get('/button1')
+    function motorAF() {
+      axios.get('/motorAF')
         .then(function (response) {
-          console.log('Button 1 clicked');
+          console.log('motor A Forward');
         })
         .catch(function (error) {
           console.error(error);
         });
     }
 
-    function button2() {
-      axios.get('/button2')
+    function motorAB() {
+      axios.get('/motorAB')
         .then(function (response) {
-          console.log('Button 2 clicked');
+          console.log('motor A Backward');
         })
         .catch(function (error) {
           console.error(error);
         });
     }
 
-    function button3() {
-      axios.get('/button3')
+    function motorBF() {
+      axios.get('/motorBF')
         .then(function (response) {
-          console.log('Button 3 clicked');
+          console.log('motor B Forward');
         })
         .catch(function (error) {
           console.error(error);
         });
     }
 
-    function button4() {
-      axios.get('/button4')
+    function motorBB() {
+      axios.get('/motorBB')
         .then(function (response) {
           console.log(response);
-          console.log('Button 4 clicked');
+          console.log('motor B Backward');
         })
         .catch(function (error) {
           console.error(error);
         });
     }
 
-    function actualizarDatos() {
-      axios.get('/data')
+    function reset_motors() {
+      axios.get('/reset')
+        .then(function (response) {
+          console.log(response);
+          console.log('motors restarted');
+        })
+        .catch(function (error) {
+          console.error(error);
+        });
+    }
+
+    function actualizarTemp() {
+      axios.get('/temperatura')
         .then(function (response) {  
           console.log(response.data);  
           datos = response.data;
           valorT = datos.temperatura.toFixed(2);
-          valorP = datos.presion.toFixed(2);
-          valorC = datos.corriente;
 
           temperatura = document.getElementById("temperatura");
           temperatura.innerHTML = valorT;
-          temperatura = document.getElementById("presion");
-          temperatura.innerHTML = valorP;
-          temperatura = document.getElementById("corriente");
-          temperatura.innerHTML = valorC;
+        })
+        .catch(function (error) {
+          console.error(error);
+        });
+    }
 
+    function actualizarPresion() {
+      axios.get('/presion')
+        .then(function (response) {  
+          console.log(response.data);  
+          datos = response.data;
+          valorP = datos.presion.toFixed(2);
+
+          presion = document.getElementById("presion");
+          presion.innerHTML = valorP;
+        })
+        .catch(function (error) {
+          console.error(error);
+        });
+    }
+
+    function actualizarCorriente() {
+      axios.get('/corriente')
+        .then(function (response) {  
+          console.log(response.data);  
+          datos = response.data;
+          valorC = datos.corriente.toFixed(2);
+
+          corriente = document.getElementById("corriente");
+          corriente.innerHTML = valorC;
         })
         .catch(function (error) {
           console.error(error);
         });
     }
     
-    setInterval(actualizarDatos, 1500);
+    setInterval(actualizarTemp, 5000);
+    setInterval(actualizarPresion, 2000);
+    setInterval(actualizarCorriente, 1000);
   </script>
 </body>
 </html>

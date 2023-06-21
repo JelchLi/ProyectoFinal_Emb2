@@ -14,4 +14,6 @@ esp_err_t motorA_atras(void);
 esp_err_t motorB_adelante(void);
 esp_err_t motorB_atras(void);
 
+esp_err_t reset_motors(void);
+
 #endif 

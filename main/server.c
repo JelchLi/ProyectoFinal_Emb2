@@ -5,6 +5,7 @@
 
 //Definimos la memoria de la cola de transferencia del servidor, por defecto es 4096, esto no abarco asi que se decidio aumentar la memoria
 #define HTTPD_STACK_SIZE 12228
+#define HTTPD_MAX_URIS 9
 //TAG para imprimir los datos por UART
 static const char *TAG = "main";
 
@@ -38,12 +39,12 @@ static esp_err_t root_get_handler(httpd_req_t *req)
     return ESP_OK;
 }
 
-//manejador del boton 1
-static esp_err_t button1_handler(httpd_req_t *req)
+
+static esp_err_t AForward_handler(httpd_req_t *req)
 {
     //mensaje de verificacion 
     ESP_LOGI(TAG, "boton1");
-    //se llama a la funcion para mover el motor hacia adelante
+
     motorA_adelante();
     //se manda una respuesta nula, para que el navegador pueda continuar reciebiendo respuestas
     httpd_resp_send(req, NULL, 0);
@@ -51,12 +52,12 @@ static esp_err_t button1_handler(httpd_req_t *req)
     return ESP_OK;
 }
 
-//manejador del boton 2
-static esp_err_t button2_handler(httpd_req_t *req)
+
+static esp_err_t ABackward_handler(httpd_req_t *req)
 {
     //mensaje de verificacion 
     ESP_LOGI(TAG, "boton2");
-    //se llama a la funcion para mover el motor hacia atras
+
     motorA_atras();
     //se manda una respuesta nula, para que el navegador pueda continuar reciebiendo respuestas
     httpd_resp_send(req, NULL, 0);
@@ -64,12 +65,12 @@ static esp_err_t button2_handler(httpd_req_t *req)
     return ESP_OK;
 }
 
-//manejador del boton 3
-static esp_err_t button3_handler(httpd_req_t *req)
+
+static esp_err_t BForward_handler(httpd_req_t *req)
 {
     
     ESP_LOGI(TAG, "boton3");
-    //se llama a la funcion para mover el motor hacia adelante
+
     motorB_adelante();
 
     //se manda una respuesta nula, para que el navegador pueda continuar reciebiendo respuestas
@@ -78,15 +79,29 @@ static esp_err_t button3_handler(httpd_req_t *req)
     return ESP_OK;
 }
 
-//manejador del boton 4
-static esp_err_t button4_handler(httpd_req_t *req)
+
+static esp_err_t BBackward_handler(httpd_req_t *req)
 {
     
     ESP_LOGI(TAG, "boton4");
     //se llama a la funcion para mover el motor hacia atras
     motorB_atras();
 
-    //se manda una respuesta nula, para que el navegador pueda continuar reciebiendo respuestas
+    //se manda una respuesta nula, para que el navegador pueda continuar recibiendo respuestas
+    httpd_resp_send(req, NULL, 0);
+
+    return ESP_OK;
+}
+
+
+static esp_err_t reset_handler(httpd_req_t *req)
+{
+    
+    ESP_LOGI(TAG, "restarted");
+    //se llama a la funcion para mover el motor hacia atras
+    reset_motors();
+
+    //se manda una respuesta nula, para que el navegador pueda continuar recibiendo respuestas
     httpd_resp_send(req, NULL, 0);
 
     return ESP_OK;
@@ -101,22 +116,72 @@ typedef struct {
 
 
 //manejador de los datos de los sensores
-static esp_err_t data_handler(httpd_req_t *req)
+static esp_err_t temp_handler(httpd_req_t *req)
 {
     //mensaje de verificacion
-    ESP_LOGI(TAG, "data sent");
+    ESP_LOGI(TAG, "temperature sent");
 
     //se crea la estructura donde se guardaran los datos
-    SensorData data;
-    data.temperatura = get_temperature();
-    data.presion = get_presion();
-    data.corriente = get_corriente();
+    SensorData temp_data;
+    temp_data.temperatura = get_temperature();
 
     //se crea un obejeto JSON donde se guardan los datos para enviar al cliente
     cJSON *root = cJSON_CreateObject();
-    cJSON_AddNumberToObject(root, "temperatura", data.temperatura);
-    cJSON_AddNumberToObject(root, "presion", data.presion);
-    cJSON_AddNumberToObject(root, "corriente", data.corriente);
+    cJSON_AddNumberToObject(root, "temperatura", temp_data.temperatura);
+
+    //convierte el objeto en una cadena para ser enviada 
+    char *json_str = cJSON_PrintUnformatted(root);
+
+    //se envia el objeto al cliente
+    httpd_resp_set_type(req, "application/json");
+    httpd_resp_send(req, json_str, strlen(json_str));
+
+    //se libera el espacio utilizado por el objeto JSON
+    free(json_str);
+    cJSON_Delete(root);
+
+    return ESP_OK;
+}
+//manejador de los datos de los sensores
+static esp_err_t pressure_handler(httpd_req_t *req)
+{
+    //mensaje de verificacion
+    ESP_LOGI(TAG, "pressure sent");
+
+    //se crea la estructura donde se guardaran los datos
+    SensorData pressure_data;
+    pressure_data.temperatura = get_presion();
+
+    //se crea un obejeto JSON donde se guardan los datos para enviar al cliente
+    cJSON *root = cJSON_CreateObject();
+    cJSON_AddNumberToObject(root, "presion", pressure_data.temperatura);
+
+    //convierte el objeto en una cadena para ser enviada 
+    char *json_str = cJSON_PrintUnformatted(root);
+
+    //se envia el objeto al cliente
+    httpd_resp_set_type(req, "application/json");
+    httpd_resp_send(req, json_str, strlen(json_str));
+
+    //se libera el espacio utilizado por el objeto JSON
+    free(json_str);
+    cJSON_Delete(root);
+
+    return ESP_OK;
+}
+//manejador de los datos de los sensores
+static esp_err_t current_handler(httpd_req_t *req)
+{
+    //mensaje de verificacion
+    ESP_LOGI(TAG, "current sent");
+
+    //se crea la estructura donde se guardaran los datos
+    SensorData current_data;
+    current_data.temperatura = get_corriente();
+
+    //se crea un obejeto JSON donde se guardan los datos para enviar al cliente
+    cJSON *root = cJSON_CreateObject();
+    cJSON_AddNumberToObject(root, "corriente", current_data.temperatura);
 
     //convierte el objeto en una cadena para ser enviada 
     char *json_str = cJSON_PrintUnformatted(root);
@@ -140,38 +205,56 @@ httpd_uri_t root = {
 };
 
 //uri del boton 1
-httpd_uri_t button1 = {
-    .uri = "/button1",
+httpd_uri_t motorAF = {
+    .uri = "/motorAF",
     .method = HTTP_GET,
-    .handler = button1_handler
+    .handler = AForward_handler
 };
 
 //uri del boton 2
-httpd_uri_t button2 = {
-    .uri = "/button2",
+httpd_uri_t motorAB = {
+    .uri = "/motorAB",
     .method = HTTP_GET,
-    .handler = button2_handler
+    .handler = ABackward_handler
 };
 
 //uri del boton 3
-httpd_uri_t button3 = {
-    .uri = "/button3",
+httpd_uri_t motorBF = {
+    .uri = "/motorBF",
     .method = HTTP_GET,
-    .handler = button3_handler
+    .handler = BForward_handler
 };
 
 //uri del boton 4
-httpd_uri_t button4 = {
-    .uri = "/button4",
+httpd_uri_t motorBB = {
+    .uri = "/motorBB",
     .method = HTTP_GET,
-    .handler = button4_handler
+    .handler = BBackward_handler
+};
+
+httpd_uri_t resetAB = {
+    .uri = "/reset",
+    .method = HTTP_GET,
+    .handler = reset_handler
 };
 
 //uri de los sensores
-httpd_uri_t data = {
-    .uri = "/data",
+httpd_uri_t temperatura = {
+    .uri = "/temperatura",
     .method = HTTP_GET,
-    .handler = data_handler
+    .handler = temp_handler
+};
+//uri de los sensores
+httpd_uri_t presion = {
+    .uri = "/presion",
+    .method = HTTP_GET,
+    .handler = pressure_handler
+};
+//uri de los sensores
+httpd_uri_t corriente = {
+    .uri = "/corriente",
+    .method = HTTP_GET,
+    .handler = current_handler
 };
 
 //Inicia el servidor web
@@ -190,6 +273,9 @@ static httpd_handle_t start_webserver(void)
     //se cambia el tamano de envio de cola a 12228 bytes
     conf.stack_size = HTTPD_STACK_SIZE;
 
+    //se aumenta el maximo de URI para registrar
+    conf.max_uri_handlers = HTTPD_MAX_URIS;
+
     //se inicia el servidor con las configuraciones definidas
     esp_err_t ret = httpd_start(&server, &conf);
 
@@ -205,16 +291,18 @@ static httpd_handle_t start_webserver(void)
 
     //registro de todos los URI usados en el servidor
     httpd_register_uri_handler(server, &root);          //pagina inicial    
-    httpd_register_uri_handler(server, &button1);       //boton 1
-    httpd_register_uri_handler(server, &button2);       //boton 2
-    httpd_register_uri_handler(server, &button3);       //boton 3
-    httpd_register_uri_handler(server, &button4);       //boton 4
-    httpd_register_uri_handler(server, &data);          //datos de los sensores
+    httpd_register_uri_handler(server, &motorAF);       //motor A adelante
+    httpd_register_uri_handler(server, &motorAB);       //motor A atras
+    httpd_register_uri_handler(server, &motorBF);       //motor B adelante
+    httpd_register_uri_handler(server, &motorBB);       //motor B atras
+    httpd_register_uri_handler(server, &resetAB);       //reinicio de motores A y B
+    httpd_register_uri_handler(server, &temperatura);   //temperatura
+    httpd_register_uri_handler(server, &presion);       //presion
+    httpd_register_uri_handler(server, &corriente);     //corriente
 
-    //devuelve el servidorr ocmo respuesta
+    //devuelve el servidor como respuesta
     return server;
 }
-
 
 
 //Manejadores de eventos para la conexion y desconexion del wifi

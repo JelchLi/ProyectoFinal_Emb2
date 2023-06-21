@@ -72,3 +72,16 @@ esp_err_t motorB_atras(void)
 
     return ESP_OK;
 }
+
+esp_err_t reset_motors(void)
+{
+    //reinicio de los motores
+    gpio_set_level(in1, 0);
+    gpio_set_level(in2, 0);
+    gpio_set_level(in3, 0);
+    gpio_set_level(in4, 0);
+
+    ESP_LOGE(TAG, "motores reiniciados");
+
+    return ESP_OK;
+}
