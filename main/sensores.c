@@ -76,13 +76,13 @@ esp_err_t set_temperature(void)
     return ESP_OK;
 }
 
-
+    
 float get_temperature(void)
 {
     
     float adc_value = adc1_get_raw(ADC1_CHANNEL_6);
     //conversion a voltaje
-    float voltaje = adc_value/650;
+    float voltaje = adc_value/700;
     //conversion a temperatura
     float temperatura = voltaje/0.01;
 

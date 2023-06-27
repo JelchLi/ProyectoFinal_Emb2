@@ -11,12 +11,12 @@
   <button onclick="motorAF()">motorA-Forward</button>
   <button onclick="motorAB()">motorA-Backward</button><br>
   <button onclick="motorBF()">motorB-Forward</button>
-  <button onclick="motorBB()">motorA-Backward</button><br>
+  <button onclick="motorBB()">motorB-Backward</button><br>
   <button onclick="reset_motors()">reset motors</button><br>
   <!-- Aqui se reemplazaran los valores de los sensores-->
-  <p>Temperatura: <span id="temperatura"></span></p>
-  <p>Presion: <span id="presion"></span></p>
-  <p>Corriente: <span id="corriente"></span></p>
+  <p>Temperatura: <span id="temperatura"></span> grados celcius</p>
+  <p>Presion: <span id="presion"></span> KPa</p>
+  <p>Corriente: <span id="corriente"></span>Amperios</p>
     <!-- Funciones para mandar los GETs -->
   <script>
     function motorAF() {
@@ -117,8 +117,8 @@
     }
     
     setInterval(actualizarTemp, 5000);
-    setInterval(actualizarPresion, 2000);
-    setInterval(actualizarCorriente, 1000);
+    setInterval(actualizarPresion, 3000);
+    setInterval(actualizarCorriente, 2000);
   </script>
 </body>
 </html>

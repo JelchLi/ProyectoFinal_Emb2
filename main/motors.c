@@ -10,19 +10,19 @@ static const char* TAG = "Main";
 
 esp_err_t set_motors(void)
 {
-    //se configura el gpio16 como salida para el in1 del motor 1
+    //se configura el gpio16 como salida para el in1 del motor A
     gpio_reset_pin(in1);
     gpio_set_direction(in1, GPIO_MODE_OUTPUT);
 
-    //se configura el gpio17 como salida para el in2 del motor 1
+    //se configura el gpio17 como salida para el in2 del motor A
     gpio_reset_pin(in2);
     gpio_set_direction(in2, GPIO_MODE_OUTPUT);
 
-    //se configura el gpio18 como salida para el in2 del motor 1
+    //se configura el gpio18 como salida para el in3 del motor B
     gpio_reset_pin(in3);
     gpio_set_direction(in3, GPIO_MODE_OUTPUT);
 
-    //se configura el gpio19 como salida para el in2 del motor 1
+    //se configura el gpio19 como salida para el in4 del motor B
     gpio_reset_pin(in4);
     gpio_set_direction(in4, GPIO_MODE_OUTPUT);
 
